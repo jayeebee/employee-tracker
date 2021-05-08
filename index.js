@@ -72,16 +72,38 @@ const promptUser = () => {
 };
 
 const viewAllRoles = () => {
-    console.log("Roles coming soon")
+    let sql = `SELECT role.id AS 'Role ID',
+    role.title AS 'Job Title',
+    department.name AS 'Department',
+    role.salary AS 'Salary'
+    FROM role, department
+    WHERE role.department_id = department.id
+    `;
+    
+    db.query(sql, (err, res) => {
+        if (err) throw error;
+        console.table('ALL ROLES', res);
+        console.log(`\n`)
+    });
+    promptUser();
 };
 
 const viewAllDepartments = () => {
-    console.log("Departments coming soon")
+    let sql = `SELECT department.id AS 'Dept. ID',
+    department.name AS 'Department'
+    FROM department
+    `;
+    
+    db.query(sql, (err, res) => {
+        if (err) throw error;
+        console.table('ALL DEPARTMENTS', res);
+        console.log(`\n`)
+    });
+    promptUser();
 };
 
 
 const viewAllEmployees = () => {
-    console.log("All Employees");
     let sql = `SELECT employee.id AS 'Employee ID', 
     employee.first_name AS 'First Name', 
     employee.last_name AS 'Last Name', 
@@ -103,7 +125,111 @@ const viewAllEmployees = () => {
 };
 
 const addEmployee = () => {
-    console.log("Add employee coming soon")
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: "Please enter the Employee's first name",
+            validate: firstNameInput => {
+                if (firstNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a first name!");
+                        return false;
+                    }
+                }
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: "Please enter the Employee's last name",
+            validate: firstNameInput => {
+                if (firstNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a last name!");
+                        return false;
+                    }
+                } 
+        },
+        {
+            type: 'list',
+            name: 'role',
+            message: "Choose a role",
+            choices: [
+                'Sales Lead',
+                'Sales Person',
+                'Software Engineer',
+                'Lead Engineer',
+                'Lawyer',
+                'Legal Team Lead',
+                'Accountant'
+            ]
+        },
+        {
+            type: 'list',
+            name: 'manager',
+            message: "Choose a manager ID",
+            choices: [
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                'No Manager'
+            ]
+        }
+    ]).then((answers) => {
+        const employeeInfo = answers;
+        let newEmployee = [];
+        if (employeeInfo.manager === '1') {
+            newEmployee.push('1')
+        };
+        if (employeeInfo.manager === '2') {
+            newEmployee.push('2')
+        };
+        if (employeeInfo.manager === '3') {
+            newEmployee.push('3')
+        };
+        if (employeeInfo.manager === '4') {
+            newEmployee.push('4')
+        };
+        if (employeeInfo.manager === '5') {
+            newEmployee.push('5')
+        };
+        if (employeeInfo.manager === "No Manager") {
+            newEmployee.push('NULL')
+        };
+        if (employeeInfo.role === "Sales Lead") {
+            newEmployee.push('1')
+        };
+        if (employeeInfo.role === "Sales Person") {
+            newEmployee.push('2')
+        };
+        if (employeeInfo.role === "Software Engineer") {
+            newEmployee.push('3')
+        };
+        if (employeeInfo.role === "Lead Engineer") {
+            newEmployee.push('4')
+        };
+        if (employeeInfo.role === "Lawyer") {
+            newEmployee.push('5')
+        };
+        if (employeeInfo.role === "Legal Team Lead") {
+            newEmployee.push('6')
+        };
+        if (employeeInfo.role === "Accountant") {
+            newEmployee.push('7')
+        }
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES
+        ("${employeeInfo.firstName}", "${employeeInfo.lastName}", ${newEmployee[1]}, ${newEmployee[0]});`, (err, res) => {
+        if (err) throw error;
+        console.table('EMPLOYEE ADDED', res);
+        console.log(`\n`)
+    });
+})
+    promptUser();    
 };
 
 const addDepartment = () => {
