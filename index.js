@@ -155,15 +155,15 @@ const addEmployee = () => {
         {
             type: 'list',
             name: 'role',
-            message: "Choose a role",
+            message: "Choose a role ID",
             choices: [
-                'Sales Lead',
-                'Sales Person',
-                'Software Engineer',
-                'Lead Engineer',
-                'Lawyer',
-                'Legal Team Lead',
-                'Accountant'
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7'
             ]
         },
         {
@@ -180,64 +180,98 @@ const addEmployee = () => {
             ]
         }
     ]).then((answers) => {
-        const employeeInfo = answers;
-        let newEmployee = [];
-        if (employeeInfo.manager === '1') {
-            newEmployee.push('1')
-        };
-        if (employeeInfo.manager === '2') {
-            newEmployee.push('2')
-        };
-        if (employeeInfo.manager === '3') {
-            newEmployee.push('3')
-        };
-        if (employeeInfo.manager === '4') {
-            newEmployee.push('4')
-        };
-        if (employeeInfo.manager === '5') {
-            newEmployee.push('5')
-        };
-        if (employeeInfo.manager === "No Manager") {
-            newEmployee.push('NULL')
-        };
-        if (employeeInfo.role === "Sales Lead") {
-            newEmployee.push('1')
-        };
-        if (employeeInfo.role === "Sales Person") {
-            newEmployee.push('2')
-        };
-        if (employeeInfo.role === "Software Engineer") {
-            newEmployee.push('3')
-        };
-        if (employeeInfo.role === "Lead Engineer") {
-            newEmployee.push('4')
-        };
-        if (employeeInfo.role === "Lawyer") {
-            newEmployee.push('5')
-        };
-        if (employeeInfo.role === "Legal Team Lead") {
-            newEmployee.push('6')
-        };
-        if (employeeInfo.role === "Accountant") {
-            newEmployee.push('7')
-        }
-    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
-    VALUES
-        ("${employeeInfo.firstName}", "${employeeInfo.lastName}", ${newEmployee[1]}, ${newEmployee[0]});`, (err, res) => {
-        if (err) throw error;
-        console.table('EMPLOYEE ADDED', res);
-        console.log(`\n`)
-    });
-})
-    promptUser();    
-};
+        let sqlNewEmp = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES
+            ("${answers.firstName}", "${answers.lastName}", "${answers.role}", "${answers.manager}")`;
+            db.query(sqlNewEmp, (err, res) => {
+                if (err) throw error;
+                console.log('ADDED NEW EMPLOYEE', res);
+                console.log(`\n`)
+            });
+            promptUser();   
+        })                
+    }
 
 const addDepartment = () => {
-    console.log("Add Dept coming soon")
-};
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'deptName',
+            message: "Please enter the new department's name",
+            validate: deptNameInput => {
+                if (deptNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a department name!");
+                        return false;
+                    }
+                }
+        }
+    ]).then((answers) => {
+        let sqlDept = `INSERT INTO department (name)
+        VALUES
+            ('${answers.deptName}')`;
+        db.query(sqlDept, (err, res) => {
+            if (err) throw error;
+            console.log('ADDED DEPARTMENT', res);
+            console.log(`\n`)
+        });
+        promptUser();
+    })                
+}
 
 const addRole = () => {
-    console.log("Add role coming soon")
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'roleName',
+            message: "Please enter the new role's name",
+            validate: roleNameInput => {
+                if (roleNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a role name!");
+                        return false;
+                    }
+                }
+        },
+        {
+            type: 'input',
+            name: 'roleSalary',
+            message: "Please enter the new role's salary",
+            validate: roleSalaryInput => {
+                if (roleSalaryInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter a dollar value!");
+                        return false;
+                    }
+                }
+        },
+        {
+            type: 'input',
+            name: 'deptId',
+            message: "Please enter the new role's department ID",
+            validate: firstNameInput => {
+                if (firstNameInput) {
+                        return true;
+                    } else {
+                        console.log("Please enter an ID!");
+                        return false;
+                    }
+                }
+        },
+    ]).then((answers) => {
+        let sqlRole = `INSERT INTO role (title, salary, department_id)
+        VALUES
+            ('${answers.roleName}', '${answers.roleSalary}', '${answers.deptId}')`;
+        db.query(sqlRole, (err, res) => {
+            if (err) throw error;
+            console.log('ADDED ROLE', res);
+            console.log(`\n`)
+        });
+        promptUser();
+    })    
 };
 
 const updateEmployeeRole = () => {
