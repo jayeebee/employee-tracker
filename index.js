@@ -275,7 +275,53 @@ const addRole = () => {
 };
 
 const updateEmployeeRole = () => {
-    console.log("update Employee coming soon")
-};
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'name',
+            message: "Choose an employees role to change",
+            choices: [
+                'Michael Bluth',
+                'Craig Testman',
+                'Steve Defaultman',
+                'Lucille Two',
+                'Maeby Funke',
+                'Tobias Funke',
+                'Gob Bluth'
+            ]
+        },
+        {
+            type: 'list',
+            name: 'role',
+            message: "Choose a new role",
+            choices: [
+                '1 Sales Lead',
+                '2 Sales Person',
+                '3 Software Engineer',
+                '4 Lead Engineer',
+                '5 Lawyer',
+                '6 Legal Team Lead',
+                '7 Accountant'
+            ]
+        }
+    ]).then((answers) => {
+        const nameChange = answers.name.split(' ');
+        const nameFirst = JSON.stringify(nameChange[0]);
+        const nameLast = JSON.stringify(nameChange[1])
+        const newRole = answers.role.split(' ');
+        const newRoleId = JSON.stringify(newRole[0])
+        let sqlNewRole = `UPDATE employee
+        SET role_id = ${newRoleId} 
+        WHERE first_name = ${nameFirst} 
+        AND last_name = ${nameLast}`
+            db.query(sqlNewRole, (err, res) => {
+                if (err) throw error;
+                console.log('Role Updated', res);
+                console.log(`\n`)
+            });
+            promptUser();   
+        })                
+    }
+
 
 promptUser()
